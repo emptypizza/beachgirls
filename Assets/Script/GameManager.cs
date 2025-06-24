@@ -3,50 +3,85 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public enum GameState
-{
-    Ready,
-    Play,
-    Pause,
-    Clear,
-    Gameover,
-    FinalResult,
-    AskEnd,
-    DieDeley
-}
-
+/// <summary>
+/// 전체 게임 진행을 관리하는 싱글톤 매니저.
+/// Flat-Top 헥사곤 타일 그리드를 중앙 정렬로 생성합니다.
+/// </summary>
 public class GameManager : MonoBehaviour
 {
+    #region Enums & Constants
+
+    public enum GameState
+    {
+        Ready,
+        Play,
+        Pause,
+        Clear,
+        Gameover,
+        FinalResult,
+        AskEnd,
+        DieDelay    // 오타 수정
+    }
+
+    private const float DEFAULT_CELL_WIDTH = 1f;
+    #endregion
+
+    #region Inspector Fields
+
     [Header("Grid System")]
-    [SerializeField] private GameObject gridCellPrefab;
+    [SerializeField, Tooltip("생성할 헥사곤 그리드 Prefab")]
+    private GameObject gridCellPrefab;
+
+    [SerializeField, Tooltip("그리드 가로(열) 개수"), Min(1)]
+    private int gridWidth = 9;
+
+    [SerializeField, Tooltip("그리드 세로(행) 개수"), Min(1)]
+    private int gridHeight = 9;
+    #endregion
+
+    #region Public Properties
+
+    public static GameManager Instance { get; private set; }
+
+    public GameState CurrentState { get; private set; }
+    public int CurrentScore { get; private set; }
+    public int BestScore { get; private set; }
+    public float GameTime { get; private set; }
+    public static int Level { get; private set; } = 0;
+    #endregion
+
+    #region Private Fields
+
     private GameObject[,] gridObjects;
-    public int gridWidth = 9;
-    public int gridHeight = 9;
+    private UIcode uiManager;
 
-    public static GameManager Instance;
+    // 월드 경계 체크용(필요 시 활용)
+    private float leftLimit = -8.9f;
+    private float rightLimit = 9f;
+    private float topLimit = 30f;
+    private float bottomLimit = -9f;
+    #endregion
 
-    public UIcode UIManager;
-
-    public GameState GS;
-    public int nGameScore_current;
-    public int nGameScore_Best;
-    public float fGametime;
-    public static int nLevel;
-    public float LeftLimit = -8.9f;
-    public float RightLimit = 9;
-    public float TopLimit = 30f;
-    public float BottomLimit = -9f;
+    #region Unity Callbacks
 
     private void Awake()
     {
+        // 싱글톤 패턴
         if (Instance == null)
+        {
             Instance = this;
+            // DontDestroyOnLoad(gameObject); // 씬 간 유지 필요 시 활성화
+        }
         else
+        {
             Destroy(gameObject);
+            return;
+        }
 
-        UIManager = FindObjectOfType<UIcode>();
-        if (UIManager == null)
-            Debug.LogError("UIManager not found.");
+        // UI 매니저 참조
+        uiManager = FindObjectOfType<UIcode>();
+        if (uiManager == null)
+            Debug.LogError("[GameManager] UIcode 컴포넌트를 찾을 수 없습니다.");
     }
 
     private void Start()
@@ -54,83 +89,119 @@ public class GameManager : MonoBehaviour
         InitializeGame();
         GenerateGrid();
     }
+    #endregion
 
+    #region Initialization
+
+    /// <summary>
+    /// 게임 상태 및 점수, 시간 초기화
+    /// </summary>
     private void InitializeGame()
     {
-        Debug.LogFormat("Loading a new level {0}...", nLevel);
-        GS = GameState.Ready;
-        nGameScore_current = 0;
-        nGameScore_Best = 0;
-        fGametime = 0f;
+        Debug.LogFormat("=== Loading Level {0} ===", Level);
+        CurrentState = GameState.Ready;
+        CurrentScore = 0;
+        BestScore = PlayerPrefs.GetInt("BestScore", 0);
+        GameTime = 0f;
         Time.timeScale = 1f;
 
-        if (nLevel >= 1)
-            SoundManager.Instance.PlayBackgroundMusic(nLevel);
+        // 배경음악 재생
+        if (Level >= 1 && SoundManager.Instance != null)
+            SoundManager.Instance.PlayBackgroundMusic(Level);
     }
+    #endregion
 
+    #region Grid Generation
+
+    /// <summary>
+    /// Flat-Top 헥사곤 그리드를 중앙 정렬하여 생성합니다.
+    /// </summary>
     private void GenerateGrid()
     {
+        if (gridCellPrefab == null)
+        {
+            Debug.LogError("[GameManager] gridCellPrefab이 할당되지 않았습니다.");
+            return;
+        }
+
         gridObjects = new GameObject[gridWidth, gridHeight];
 
-        float startingX = (-gridWidth / 2.0f) + 0.5f;
-        float startingY = (-gridHeight / 2.0f) + 0.5f;
-        float borderThickness = 0.05f;
+        float cellWidth = DEFAULT_CELL_WIDTH;
+        float cellHeight = Mathf.Sqrt(3f) / 2f * cellWidth;
+
+        // 중앙 정렬 오프셋 계산
+        float offsetX = -cellWidth * 0.75f * (gridWidth - 1) / 2f;
+        float offsetY = -cellHeight * (gridHeight - 1) / 2f;
 
         for (int x = 0; x < gridWidth; x++)
         {
             for (int y = 0; y < gridHeight; y++)
             {
-                GameObject cell = Instantiate(gridCellPrefab, new Vector3(startingX + x, startingY + y, 0), Quaternion.identity, transform);
-                gridObjects[x, y] = cell;
+                float posX = cellWidth * 0.75f * x + offsetX;
+                float posY = cellHeight * (y + 0.5f * (x % 2)) + offsetY;
 
-                CreateBorder(cell.transform, borderThickness);
+                Vector3 pos = new Vector3(posX, posY, 0);
+                GameObject cell = Instantiate(gridCellPrefab, pos, Quaternion.identity, transform);
+                cell.tag = "GridCell";    // Collider 태그용으로 지정
+
+                gridObjects[x, y] = cell;
             }
         }
     }
 
-    private void CreateBorder(Transform parent, float thickness)
+    /// <summary>
+    /// 지정한 헥사 좌표가 유효한지 확인합니다.
+    /// </summary>
+    public bool IsCellExists(Vector2Int hexPos)
     {
-        string[] sides = { "Top", "Bottom", "Left", "Right" };
-        Vector3[] scales = {
-            new Vector3(1, thickness, 1), new Vector3(1, thickness, 1),
-            new Vector3(thickness, 1, 1), new Vector3(thickness, 1, 1)
-        };
-        Vector3[] positions = {
-            new Vector3(0, 0.5f - thickness / 2, 0),
-            new Vector3(0, -0.5f + thickness / 2, 0),
-            new Vector3(-0.5f + thickness / 2, 0, 0),
-            new Vector3(0.5f - thickness / 2, 0, 0)
-        };
+        int x = hexPos.x;
+        int y = hexPos.y;
+        if (x < 0 || x >= gridWidth || y < 0 || y >= gridHeight)
+            return false;
+        return gridObjects[x, y] != null;
+    }
+    #endregion
 
-        for (int i = 0; i < sides.Length; i++)
+    #region Public API
+
+    /// <summary>
+    /// 현재 점수에 점수를 추가합니다.
+    /// </summary>
+    public void AddScore(int delta = 1)
+    {
+        CurrentScore += delta;
+      //  uiManager?.UpdateScore(CurrentScore);
+        if (CurrentScore > BestScore)
         {
-            GameObject border = new GameObject($"{sides[i]} Border");
-            border.transform.SetParent(parent);
-            border.transform.localScale = scales[i];
-            border.transform.localPosition = positions[i];
-            border.AddComponent<SpriteRenderer>().color = Color.blue;
+            BestScore = CurrentScore;
+            PlayerPrefs.SetInt("BestScore", BestScore);
         }
     }
 
-    public Vector2 GetGridBoundary()
+    /// <summary>
+    /// 레벨 클리어 처리 후 다음 씬 로드
+    /// </summary>
+    public void ClearLevel()
     {
-        return new Vector2(gridWidth / 2.0f, gridHeight / 2.0f);
+        Level++;
+        SceneManager.LoadScene(Level < 6 ? Level : 0);
     }
 
-    public void ClearGame()
-    {
-        nLevel += 1;
-        SceneManager.LoadScene(nLevel < 6 ? nLevel : 0);
-    }
-
+    /// <summary>
+    /// 게임 오버 처리
+    /// </summary>
     public void GameOver()
     {
-        SoundManager.Instance.GameOver();
+        SoundManager.Instance?.GameOver();
         SceneManager.LoadScene(0);
     }
 
-    public void AddScore(int scoreToAdd = 1)
+    /// <summary>
+    /// 그리드 전체 크기를 반환합니다.
+    /// </summary>
+    public Vector2 GetGridDimensions()
     {
-        nGameScore_current += scoreToAdd;
+        return new Vector2(gridWidth, gridHeight);
     }
+    #endregion
 }

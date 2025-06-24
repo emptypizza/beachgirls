@@ -81,20 +81,22 @@ public class Player : MonoBehaviour
         isMoving = false;
     }
 
+    // 기존: private → 수정 후: public
+
     // 육각형 좌표 → 월드 좌표 변환 (Flat-Top 기준)
-    private Vector3 HexToWorld(Vector2Int hex)
+
+    public Vector3 HexToWorld(Vector2Int hex)
     {
         float width = 1f;
         float height = Mathf.Sqrt(3f) / 2f * width;
 
         float x = width * (3f / 4f * hex.x);
-        float y = height * (hex.y + 0.5f * (hex.x & 1)); // 홀수열 보정
+        float y = height * (hex.y + 0.5f * (hex.x & 1));
 
         return new Vector3(x, y, 0);
     }
 
-    // 월드 좌표 → 육각형 좌표 변환
-    private Vector2Int WorldToHex(Vector3 pos)
+    public Vector2Int WorldToHex(Vector3 pos)
     {
         float width = 1f;
         float height = Mathf.Sqrt(3f) / 2f * width;
@@ -103,7 +105,8 @@ public class Player : MonoBehaviour
         int r = Mathf.RoundToInt((pos.y - (q & 1) * height * 0.5f) / height);
 
         return new Vector2Int(q, r);
-    }
+    }// 월드 좌표 → 육각형 좌표 변환
+
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
