@@ -35,7 +35,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: -360, y: -935}
-  m_SizeDelta: {x: 190, y: 190}
+  m_SizeDelta: {x: 250, y: 250}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6879330749846278074
 CanvasRenderer:
@@ -65,8 +65,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 1
+  m_Sprite: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -349,7 +349,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 3310364658637923364}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 6375282650312514968}
+        m_TargetAssemblyTypeName: UIcode, Assembly-CSharp
+        m_MethodName: MoveHexUpLeft
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &4631744382379555472
 GameObject:
   m_ObjectHideFlags: 0
@@ -620,7 +632,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 3390878426171992019}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 6375282650312514968}
+        m_TargetAssemblyTypeName: UIcode, Assembly-CSharp
+        m_MethodName: MoveHexRight
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &5560303551986814103
 GameObject:
   m_ObjectHideFlags: 0
@@ -745,6 +769,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d95a0700b28ce4b3b84e4cfb76a68048, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  player: {fileID: 0}
 --- !u!1 &6032179133984680417
 GameObject:
   m_ObjectHideFlags: 0
@@ -865,7 +890,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 5447246243541499788}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 6375282650312514968}
+        m_TargetAssemblyTypeName: UIcode, Assembly-CSharp
+        m_MethodName: MoveHexUpLeft
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &6158161589026218454
 GameObject:
   m_ObjectHideFlags: 0
@@ -1215,7 +1252,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 8006463353527064456}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 6375282650312514968}
+        m_TargetAssemblyTypeName: UIcode, Assembly-CSharp
+        m_MethodName: MoveHexDownRight
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &8082329084842734540
 GameObject:
   m_ObjectHideFlags: 0

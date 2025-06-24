@@ -58,11 +58,12 @@ public class UIManager : MonoBehaviour
 
     void Update()
     {
-
+  
+    }
         
       
 
-    }
+ 
 
     public void GameClear()
     {
