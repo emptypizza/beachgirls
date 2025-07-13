@@ -45,5 +45,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gridCellPrefab: {fileID: 935555693366181932, guid: 06778738bb067461db13894bcce774b6, type: 3}
-  gridWidth: 3
-  gridHeight: 3
+  gridWidth: 9
+  gridHeight: 9
