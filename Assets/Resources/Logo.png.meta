@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: dd4dd20752a2448a798c5ac0c1e011fb
+guid: 15ec51c9d164a40a9b0e62134a9bfae1
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 2475876376519019926
-    second: free-icon-garbage-bag-1839001_0
+      213: 1404028623067837608
+    second: Logo_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -139,13 +139,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: free-icon-garbage-bag-1839001_0
+      name: Logo_0
       rect:
         serializedVersion: 2
-        x: 83
+        x: 0
         y: 0
-        width: 347
-        height: 512
+        width: 1896
+        height: 1086
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -154,8 +154,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 69d823a52741c5220800000000000000
-      internalID: 2475876376519019926
+      spriteID: 8a47074089c1c7310800000000000000
+      internalID: 1404028623067837608
       vertices: []
       indices: 
       edges: []
@@ -174,7 +174,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      free-icon-garbage-bag-1839001_0: 2475876376519019926
+      Logo_0: 1404028623067837608
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
